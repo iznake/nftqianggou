@@ -1,8 +1,8 @@
 [
     {
         "network": "eth",
-        "rpc": "http:///mainnet.infura.io/v3/e1d0b7dea53643a194cadb6ed123f88e",
-        "ws": "wss://mainnet.infura.io/v3/e1d0b7dea53643a194cadb6ed123f88e",
+        "rpc": "https://rpc.ankr.com/eth",
+        "ws": "wss://rpc.ankr.com/eth",
         "chainid": "1",
         "apiurl": "https://api.etherscan.com/api?module=contract&action=getsourcecode&address="
     },

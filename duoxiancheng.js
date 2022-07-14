@@ -25,7 +25,6 @@ function getPriKeys(prikeyPath) {
 }
 function initWeb3(value) {
     if (web3 != null) {
-        
         web3 = null;
     }
     if (value.webtype == 'rpc') {
@@ -138,7 +137,10 @@ const getBNBBalance = async (address) => {
 //私钥，合约地址，inputdata，主币数量，gas费，最大gasuse
 const qianggouNFT = async (priKey, walletaddress, inputdata, value, gas, ngasLimit) => {
     //获得自己的地址
-    var fromAddress = "0x" + util.privateToAddress(priKey).toString('hex');
+    //var fromAddress = "0x" + util.privateToAddress(priKey).toString('hex');
+    //XinBao
+    var fromAddressStr = util.privateToAddress(priKey).toString('hex');
+    var fromAddress = "0x" + fromAddressStr;
 
 
     var toAddress = walletaddress
@@ -152,10 +154,14 @@ const qianggouNFT = async (priKey, walletaddress, inputdata, value, gas, ngasLim
     var gaslimit = ngasLimit
     //没有调用智能合约，将input设置为空
     var input = inputdata
+    //XinBao
+    var newinput = input.replaceAll('$$',fromAddressStr);
     //获得下一次交易的数
     console.log("发送地址是：" + fromAddress)
     var nonceCnt = await web3.eth.getTransactionCount(fromAddress);
-    let reslut = await signTransaction(fromAddress, toAddress, input, nonceCnt, priKey, gasPrice, nbnb, gaslimit)
+    //Xinbao
+    //sendmsg(fromAddress + "处理成功 "+input+"变更为"+newinput);
+    let reslut = await signTransaction(fromAddress, toAddress, newinput, nonceCnt, priKey, gasPrice, nbnb, gaslimit)
     if (reslut) {
         //console.log("交易成功")
         sendmsg(fromAddress + "交易成功");
@@ -199,7 +205,7 @@ const getnonce = async (address) => {
 }
 
 
-function test() {
+function test(value) {
     //var prikeyint = BigInt(0xaba9a9f7df9d19a5339073a9b5f2976d69b756dac39826a166353307d853cc80n); //这里填自己的私钥
     //启动程序
     /*for (var i = 0; i < 10; i++) {
@@ -209,9 +215,15 @@ function test() {
         prikeyint = prikeyint + 1n;
     }*/
     var i = 0;
+    ////XinBao added
+    var walletlimit = value.walletlimit;
+
+    console.log("walletlimit" + walletlimit);
     for (priKey of priKeys) {
         testbalance(i, priKey);
         i++;
+        if (i == walletlimit)
+            break;
     }
 }
 
@@ -221,8 +233,14 @@ function qianggou(value) {
     var inputdata = value.inputdata;
     var nftaddress = value.nftaddress;
     var neth = value.neth;
+    var walletlimit = value.walletlimit;
+    var i = 0;
     for (priKey of priKeys) {
+
         qianggouNFT(priKey, nftaddress, inputdata, neth, gas, gaslimit);
+        i = i+1;
+        if( i == walletlimit)
+            break;
         //break;
     }
 
